@@ -12,9 +12,11 @@ export default function FloatingButton({
 }: FloatingButtonProps) {
   return (
     <Link href={href} passHref>
-      <a className="fixed hover:bg-orange-500 border-0 aspect-square border-transparent transition-colors cursor-pointer  bottom-32 right-5 shadow-xl bg-orange-400 rounded-full w-14 flex items-center justify-center text-white">
-        {children}
-      </a>
+      <div className="sticky flex justify-end max-w-xl bottom-32 border-0 border-transparent">
+        <a className="w-14 h-14 rounded-full hover:bg-orange-500 transition-colors cursor-pointer shadow-xl bg-orange-400 flex items-center justify-center text-white">
+          {children}
+        </a>
+      </div>
     </Link>
   );
 }
