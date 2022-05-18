@@ -2,20 +2,44 @@ import type { NextPage } from "next";
 import Layout from "@components/layout";
 import Link from "next/link";
 import FloatingButton from "@components/floating-button";
+import { Stream } from "@prisma/client";
+import useSWR from "swr";
+import { useState } from "react";
+
+interface StreamsResponse {
+  ok: boolean;
+  streams: Stream[];
+}
 
 const Streams: NextPage = () => {
+  const [page, setPage] = useState(0);
+  const { data, mutate } = useSWR<StreamsResponse>(`/api/streams?page=${page}`);
+  const onChangePage = (number: number) => {
+    setPage(number);
+    mutate();
+    console.log(number);
+  };
   return (
     <Layout title="라이브" hasTabBar>
       <div className="py-10  space-y-4 divide-y-2">
-        {[1, 2, 3, 4, 5].map((_, i) => (
-          <Link key={i} href={`/streams/${i}`}>
+        {data?.streams?.map((stream) => (
+          <Link key={stream.id} href={`/streams/${stream.id}`}>
             <a className="pt-4 block  px-4">
               <div className="w-full rounded-md shadow-sm bg-slate-300 aspect-video" />
               <h1 className="text-2xl mt-2 font-bold text-gray-900">
-                Galaxy S50
+                {stream.name}
               </h1>
             </a>
           </Link>
+        ))}
+        {[1, 2, 3, 4, 5].map((number) => (
+          <button
+            className="relative left-1/4 inline-flex items-center justify-center m-3 w-8 h-8 rounded-md text-white bg-orange-500"
+            onClick={() => onChangePage(number)}
+            key={number}
+          >
+            {number}
+          </button>
         ))}
         <FloatingButton href="/streams/create">
           <svg
