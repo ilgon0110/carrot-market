@@ -6,7 +6,7 @@ const Sold: NextPage = () => {
   return (
     <Layout canGoBack>
       <div className="flex px-4 flex-col space-y-5 py-10">
-        <ProductList kind="sales" />
+        <ProductList kind="Sale" />
       </div>
     </Layout>
   );

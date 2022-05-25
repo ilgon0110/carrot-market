@@ -13,14 +13,16 @@ interface ProductListResponse {
 }
 
 interface ProductListProps {
-  kind: "favs" | "sales" | "purchases";
+  kind: "Fav" | "Sale" | "Purchase";
 }
 
 export default function ProductList({ kind }: ProductListProps) {
-  const { data } = useSWR<ProductListResponse>(`/api/users/me/${kind}`);
+  const { data } = useSWR<ProductListResponse>(
+    `/api/users/me/record?kind=${kind}`
+  );
   return data ? (
     <>
-      {data[kind]?.map((record) => (
+      {data?.records?.map((record) => (
         <Item
           key={record.id}
           id={record.product.id}
