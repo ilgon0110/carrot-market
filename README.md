@@ -2,7 +2,7 @@
 
 ## Code Challenge
 
-### 1. API Redirect : Record로 한번만 적용
+~~### 1. API Redirect : Record로 한번만 적용~~
 
 ### 2. useUser Hook 전체 적용
 
