@@ -4,7 +4,7 @@
 
 ~~### 1. API Redirect : Record로 한번만 적용~~
 
-~~### 2. useUser Hook 전체 적용~~
+### 2. useUser Hook 전체 적용
 
 ### 3. ChatRoom Model (Talk to Seller 기능구현)
 
