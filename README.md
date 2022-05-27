@@ -6,7 +6,7 @@
 
 ~~### 2. useUser Hook 전체 적용~~
 
-### 3. ChatRoom Model (Talk to Seller 기능구현)
+~~### 3. ChatRoom Model (Talk to Seller 기능구현)~~ - seller 와 buyer 설정 
 
 ### 4. 물건 예약 버튼(누르면 예약내역 생성)
 
