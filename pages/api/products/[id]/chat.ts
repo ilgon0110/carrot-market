@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import client from "@libs/server/client";
 import withHandler, { ResponseType } from "@libs/server/withHandler";
 import { withApiSession } from "@libs/server/withSession";
+import products from "..";
 
 async function handler(
   req: NextApiRequest,
@@ -10,39 +11,30 @@ async function handler(
 ) {
   const {
     query: { id },
+    body,
     session: { user },
   } = req;
-  const alreadyExists = await client.record.findFirst({
-    where: {
-      productId: +id.toString(),
-      userId: user?.id,
+  const chat = await client.chat.create({
+    data: {
+      chat: body.chat,
+      product: {
+        connect: {
+          id: +id.toString(),
+        },
+      },
+      chatroom: {
+        connect: {
+          id: +id.toString(),
+        },
+      },
+      user: {
+        connect: {
+          id: user?.id,
+        },
+      },
     },
   });
-  if (alreadyExists) {
-    await client.record.delete({
-      where: {
-        id: alreadyExists.id,
-      },
-    });
-  } else {
-    await client.record.create({
-      data: {
-        user: {
-          connect: {
-            id: user?.id,
-          },
-        },
-        kind: "Fav",
-        product: {
-          connect: {
-            id: +id.toString(),
-          },
-        },
-      },
-    });
-    res.json({ ok: true });
-  }
-  res.json({ ok: true });
+  res.json({ ok: true, chat });
 }
 
 export default withApiSession(withHandler({ methods: ["POST"], handler }));

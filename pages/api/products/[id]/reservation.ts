@@ -11,38 +11,37 @@ async function handler(
   const {
     query: { id },
     session: { user },
+    body,
   } = req;
-  const alreadyExists = await client.record.findFirst({
-    where: {
-      productId: +id.toString(),
-      userId: user?.id,
-    },
-  });
-  if (alreadyExists) {
-    await client.record.delete({
-      where: {
-        id: alreadyExists.id,
-      },
-    });
-  } else {
-    await client.record.create({
+  if (req.method === "POST") {
+    const reservation = await client.reservation.create({
       data: {
-        user: {
-          connect: {
-            id: user?.id,
-          },
-        },
-        kind: "Fav",
-        product: {
+        Rseller: {
           connect: {
             id: +id.toString(),
           },
         },
+        Rbuyer: {
+          connect: {
+            id: user?.id,
+          },
+        },
+        date: body.date + " " + body.time,
       },
     });
-    res.json({ ok: true });
+
+    if (reservation !== null) {
+      await client.reservation.update({
+        where: {
+          id: +id.toString(),
+        },
+        data: {
+          date: body.date + " " + body.time,
+        },
+      });
+    }
+    res.json({ ok: true, reservation });
   }
-  res.json({ ok: true });
 }
 
 export default withApiSession(withHandler({ methods: ["POST"], handler }));

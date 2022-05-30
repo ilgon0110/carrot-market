@@ -30,13 +30,13 @@ async function handler(
     },
   });
   if (phone) {
-    /* const message = await twilioClient.messages.create({
+    const message = await twilioClient.messages.create({
       messagingServiceSid: process.env.TWILIO_MESSAGE_SID,
       //이론적으론 phone을 input해야함
       to: process.env.PHONE_NUMBER!,
       body: `Your login token is ${payload}`,
     });
-    console.log(message); */
+    console.log(message);
   }
 
   // if (email) {

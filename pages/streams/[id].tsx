@@ -33,7 +33,6 @@ interface MessageForm {
 
 const StreamsDetail: NextPage = () => {
   const { user } = useUser();
-  console.log(user?.id);
   const router = useRouter();
   const { register, handleSubmit, reset } = useForm<MessageForm>();
   const { data, mutate } = useSWR<StreamsResponse>(
@@ -65,10 +64,10 @@ const StreamsDetail: NextPage = () => {
     );
     sendMessage(form);
   };
-
+  console.log(data);
   return (
     <Layout canGoBack>
-      <div className="py-10 px-4  space-y-4">
+      <div className="py-10 px-4 space-y-4">
         <div className="w-full rounded-md shadow-sm bg-slate-300 aspect-video" />
         <div className="mt-5">
           <h1 className="text-3xl font-bold text-gray-900">

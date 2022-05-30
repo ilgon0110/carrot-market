@@ -13,7 +13,7 @@ interface ProductWithUser extends Product {
   user: User;
 }
 
-interface ItemDetailResponse {
+export interface ItemDetailResponse {
   ok: boolean;
   product: ProductWithUser;
   relatedProducts: Product[];
@@ -21,18 +21,26 @@ interface ItemDetailResponse {
 }
 
 const ItemDetail: NextPage = () => {
-  const { user, isLoading } = useUser();
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const { data, mutate: boundMutate } = useSWR<ItemDetailResponse>(
     router.query.id ? `/api/products/${router.query.id}` : null
   );
-  const [toggleFav] = useMutation(`/api/products/${router.query.id}/fav`);
+  const [toggleFav, { data: favData }] = useMutation(
+    `/api/products/${router.query.id}/fav`
+  );
   const onFavClick = () => {
     if (!data) return;
     boundMutate({ ...data, isLiked: !data.isLiked }, false);
     //mutate("/api/users/me" , (prev:any) => ({ok:!prev.ok}) , false);
     toggleFav({});
+  };
+  console.log(favData);
+  const [createChatroom, { data: chatroomData }] = useMutation(
+    `/api/products/${router.query.id}/chatroom`
+  );
+  const clickChatroom = () => {
+    createChatroom({});
   };
   return (
     <Layout canGoBack>
@@ -63,7 +71,11 @@ const ItemDetail: NextPage = () => {
               {data?.product?.description}
             </p>
             <div className="flex items-center justify-between space-x-2">
-              <Button large text="Talk to seller" />
+              <Link href={`/items/${router.query.id}/chatroom`}>
+                <a onClick={clickChatroom} className="w-full">
+                  <Button large text="Talk to seller" />
+                </a>
+              </Link>
               <button
                 onClick={onFavClick}
                 className={cls(

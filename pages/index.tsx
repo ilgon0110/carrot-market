@@ -9,8 +9,9 @@ import { Product } from "@prisma/client";
 
 export interface ProductWithCount extends Product {
   _count: {
-    favs: number;
+    record: number;
   };
+  record: [{ kind: string }];
 }
 
 interface ProductsResponse {
@@ -19,22 +20,39 @@ interface ProductsResponse {
 }
 
 const Home: NextPage = () => {
-  const { user, isLoading } = useUser();
   const { data } = useSWR<ProductsResponse>("/api/products");
-  console.log(data);
+  const favNumber = data?.products
+    .map((a) => a.record)
+    .map((a) => a.find((kind) => kind.kind === "Fav"));
+  const arrayCount = (array: any) => {
+    let counter = 0;
+    let numArr = [];
+    if (array)
+      for (let i = 0; i < array.length; i++) {
+        if (array[i] !== undefined) {
+          counter++;
+          numArr[i] = counter;
+        } else if (array[i] === undefined) {
+          numArr[i] = 0;
+        }
+        counter = 0;
+      }
+    return numArr;
+  };
+  const heartNumArr = arrayCount(favNumber);
   return (
     <Layout title="홈" hasTabBar>
       <Head>
         <title>Home</title>
       </Head>
       <div className="flex px-4 flex-col space-y-5 divide-y">
-        {data?.products?.map((product) => (
+        {data?.products?.map((product, index) => (
           <Item
             key={product.id}
             id={product.id}
             title={product.name}
             price={product.price}
-            hearts={product._count.favs}
+            hearts={heartNumArr[index]}
           />
         ))}
         <FloatingButton href="/items/upload">

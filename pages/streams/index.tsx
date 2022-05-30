@@ -12,7 +12,7 @@ interface StreamsResponse {
 }
 
 const Streams: NextPage = () => {
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const { data, mutate } = useSWR<StreamsResponse>(`/api/streams?page=${page}`);
   const onChangePage = (number: number) => {
     setPage(number);
