@@ -22,7 +22,9 @@ const Reservation: NextPage = () => {
   const [sendReservation, { data: Rdata }] = useMutation(
     `/api/products/${router.query.id}/reservation`
   );
-  const [sendChat] = useMutation(`/api/products/${router.query.id}/chat`);
+  const [sendChat] = useMutation(
+    `/api/products/${router.query.id}/chat?kind=Reservation`
+  );
   const { register, handleSubmit } = useForm();
   const onValid = (form: FormReservation) => {
     console.log(form);

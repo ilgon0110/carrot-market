@@ -64,6 +64,11 @@ const ItemDetail: NextPage = () => {
             <h1 className="text-3xl font-bold text-gray-900">
               {data?.product?.name}
             </h1>
+            {data?.product.isReservation === true ? (
+              <div className="flex justify-end -mt-8">
+                <h1 className="text-red-500 font-semibold text-lg">예약중</h1>
+              </div>
+            ) : null}
             <span className="text-3xl mt-3 block text-gray-900">
               ${data?.product?.price}
             </span>

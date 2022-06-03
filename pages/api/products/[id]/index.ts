@@ -4,6 +4,10 @@ import client from "@libs/server/client";
 import withHandler, { ResponseType } from "@libs/server/withHandler";
 import { withApiSession } from "@libs/server/withSession";
 
+interface Reqistrue {
+  istrue: boolean;
+}
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>
@@ -12,6 +16,8 @@ async function handler(
     query: { id },
     session: { user },
   } = req;
+  const { istrue } = req.body as unknown as Reqistrue;
+  console.log(istrue);
   const product = await client.product.findUnique({
     where: {
       id: +id.toString(),
@@ -53,6 +59,30 @@ async function handler(
     })
   );
   res.json({ ok: true, product, isLiked, relatedProducts });
+  if (req.method == "POST" && istrue === true) {
+    await client.product.update({
+      where: {
+        id: +id.toString(),
+      },
+      data: {
+        isReservation: true,
+      },
+    });
+    res.json({ ok: true });
+  }
+  if (req.method == "POST" && istrue === false) {
+    await client.product.update({
+      where: {
+        id: +id.toString(),
+      },
+      data: {
+        isReservation: false,
+      },
+    });
+    res.json({ ok: true });
+  }
 }
 
-export default withApiSession(withHandler({ methods: ["GET"], handler }));
+export default withApiSession(
+  withHandler({ methods: ["GET", "POST"], handler })
+);

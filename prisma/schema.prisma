@@ -50,20 +50,21 @@ model Token {
 }
 
 model Product {
-  id          Int        @id @default(autoincrement())
-  createAt    DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      Int
-  image       String
-  name        String
-  price       Int
-  description String     @db.MediumText
-  favs        Fav[]
-  sales       Sale[]
-  purchases   Purchase[]
-  record      Record[]
-  chats       Chat[]
+  id            Int        @id @default(autoincrement())
+  createAt      DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        Int
+  image         String
+  name          String
+  price         Int
+  description   String     @db.MediumText
+  isReservation Boolean    @default(false)
+  favs          Fav[]
+  sales         Sale[]
+  purchases     Purchase[]
+  record        Record[]
+  chats         Chat[]
 }
 
 model Post {
@@ -189,10 +190,16 @@ model Chat {
   chat       String   @db.MediumText
   product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId  Int
+  kind       RKind    @default(JustChat)
   createAt   DateTime @default(now())
   updatedAt  DateTime @updatedAt
   chatroom   Chatroom @relation(fields: [chatroomId], references: [id], onDelete: Cascade)
   chatroomId Int
+}
+
+enum RKind {
+  Reservation
+  JustChat
 }
 
 model Chatroom {

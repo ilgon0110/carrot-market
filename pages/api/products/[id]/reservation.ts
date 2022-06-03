@@ -13,6 +13,7 @@ async function handler(
     session: { user },
     body,
   } = req;
+
   if (req.method === "POST") {
     const reservation = await client.reservation.create({
       data: {

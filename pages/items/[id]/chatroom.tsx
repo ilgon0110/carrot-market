@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { useRouter } from "next/router";
 import useMutation from "@libs/client/useMutation";
 import useUser from "@libs/client/useUser";
-import { Chatroom } from "@prisma/client";
+import { Chatroom, RKind } from "@prisma/client";
 import { ItemDetailResponse } from ".";
 import Link from "next/link";
 
@@ -22,7 +22,14 @@ interface ChatroomWithUser extends Chatroom {
     avatar?: string;
     name: string;
   };
-  chat: [{ id: number; chat: string; user: { id: number; avatar?: string } }];
+  chat: [
+    {
+      id: number;
+      chat: string;
+      user: { id: number; avatar?: string };
+      kind: RKind;
+    }
+  ];
 }
 interface ChatResponse {
   ok: boolean;
@@ -35,10 +42,10 @@ const Chatrooms: NextPage = () => {
     router.query.id ? `/api/products/${router.query.id}` : null
   );
   const { data, mutate } = useSWR<ChatResponse>(
-    router.query.id ? `/api/products/${router.query.id}/chatroom` : null
-    /* {
+    router.query.id ? `/api/products/${router.query.id}/chatroom` : null,
+    {
       refreshInterval: 1000,
-    } */
+    }
   );
   const [sendChat] = useMutation(`/api/products/${router.query.id}/chat`);
   console.log(data);
@@ -84,6 +91,7 @@ const Chatrooms: NextPage = () => {
             key={chat.id}
             message={chat.chat}
             reversed={chat.user.id === user?.id ? true : false}
+            reservation={chat.kind}
           />
         ))}
       </div>

@@ -3,7 +3,11 @@ import { NextApiRequest, NextApiResponse } from "next";
 import client from "@libs/server/client";
 import withHandler, { ResponseType } from "@libs/server/withHandler";
 import { withApiSession } from "@libs/server/withSession";
-import products from "..";
+import { RKind } from "@prisma/client";
+
+interface reqKind {
+  kind: RKind;
+}
 
 async function handler(
   req: NextApiRequest,
@@ -14,6 +18,7 @@ async function handler(
     body,
     session: { user },
   } = req;
+  const { kind } = req.query as unknown as reqKind;
   const chat = await client.chat.create({
     data: {
       chat: body.chat,
@@ -27,6 +32,7 @@ async function handler(
           id: +id.toString(),
         },
       },
+      kind,
       user: {
         connect: {
           id: user?.id,

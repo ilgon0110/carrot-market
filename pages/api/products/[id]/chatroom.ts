@@ -34,6 +34,7 @@ async function handler(
           select: {
             id: true,
             chat: true,
+            kind: true,
             user: {
               select: {
                 id: true,
