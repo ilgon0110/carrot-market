@@ -37,7 +37,7 @@ const Reservation: NextPage = () => {
     router.back();
   };
   return (
-    <Layout>
+    <Layout seoTitle="Reservation">
       <div>{data?.product.image}</div>
       <div>{data?.product.name}</div>
       <div>{data?.product.price}</div>

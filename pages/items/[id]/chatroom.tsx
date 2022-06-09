@@ -70,7 +70,7 @@ const Chatrooms: NextPage = () => {
     );
   };
   return (
-    <Layout canGoBack title={data?.chatroom?.seller?.name}>
+    <Layout seoTitle="Chatroom" canGoBack title={data?.chatroom?.seller?.name}>
       <div className="fixed flex w-[576px] h-24 bg-gray-100">
         <div className="w-12 h-12 m-2 bg-gray-500 rounded-sm" />
         <div className="flex flex-col">

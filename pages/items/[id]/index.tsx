@@ -43,7 +43,7 @@ const ItemDetail: NextPage = () => {
     createChatroom({});
   };
   return (
-    <Layout canGoBack>
+    <Layout seoTitle="Product" canGoBack>
       <div className="px-4 py-4">
         <div className="mb-8">
           <div className="h-96 bg-slate-300" />

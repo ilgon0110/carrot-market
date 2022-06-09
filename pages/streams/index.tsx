@@ -20,7 +20,7 @@ const Streams: NextPage = () => {
     console.log(number);
   };
   return (
-    <Layout title="라이브" hasTabBar>
+    <Layout seoTitle="Stream" title="라이브" hasTabBar>
       <div className="py-10  space-y-4 divide-y-2">
         {data?.streams?.map((stream) => (
           <Link key={stream.id} href={`/streams/${stream.id}`}>

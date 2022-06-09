@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const Chats: NextPage = () => {
   return (
-    <Layout title="채팅" hasTabBar>
+    <Layout seoTitle="Chat" title="채팅" hasTabBar>
       <div className="py-10 divide-y-[1px] ">
         {[1, 1, 1, 1, 1, 1, 1].map((_, i) => (
           <Link href={`/chats/${i}`} key={i}>

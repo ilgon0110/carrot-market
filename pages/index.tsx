@@ -4,13 +4,11 @@ import Layout from "@components/layout";
 import Item from "@components/item";
 import useUser from "@libs/client/useUser";
 import Head from "next/head";
-import useSWR from "swr";
+import useSWR, { SWRConfig } from "swr";
 import { Product } from "@prisma/client";
+import client from "@libs/server/client";
 
 export interface ProductWithCount extends Product {
-  _count: {
-    record: number;
-  };
   record: [{ kind: string }];
 }
 
@@ -41,7 +39,7 @@ const Home: NextPage = () => {
   };
   const heartNumArr = arrayCount(favNumber);
   return (
-    <Layout title="홈" hasTabBar>
+    <Layout seoTitle="" title="홈" hasTabBar>
       <Head>
         <title>Home</title>
       </Head>
@@ -77,4 +75,38 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+const Page: NextPage<{ products: ProductWithCount }> = ({ products }) => {
+  return (
+    <SWRConfig
+      value={{
+        fallback: {
+          "/api/products": {
+            ok: true,
+            products,
+          },
+        },
+      }}
+    >
+      <Home />
+    </SWRConfig>
+  );
+};
+
+export async function getServerSideProps() {
+  const products = await client.product.findMany({
+    include: {
+      record: {
+        select: {
+          kind: true,
+        },
+      },
+    },
+  });
+  return {
+    props: {
+      products: JSON.parse(JSON.stringify(products)),
+    },
+  };
+}
+
+export default Page;
