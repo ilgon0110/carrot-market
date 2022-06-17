@@ -25,6 +25,8 @@ async function handler(
         },
       },
     });
+    /* On Demand Revalidation
+    await res.unstable_revalidate("/community"); */
     res.json({ ok: true, post });
   }
   if (req.method === "GET") {
