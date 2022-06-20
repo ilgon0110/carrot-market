@@ -8,6 +8,11 @@ function UseUserHook() {
   const { user } = useUser();
   return null;
 }
+declare global {
+  interface Window {
+    fbAsyncInit: unknown;
+  }
+}
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
