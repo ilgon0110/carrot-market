@@ -16,11 +16,11 @@ async function handler(
             kind: true,
           },
         },
-        _count: {
+        /* _count: {
           select: {
             record: true,
           },
-        },
+        }, */
       },
     });
     res.json({

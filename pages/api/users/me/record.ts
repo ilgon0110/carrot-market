@@ -25,12 +25,10 @@ async function handler(
     },
     include: {
       product: {
-        include: {
-          _count: {
-            select: {
-              favs: true,
-            },
-          },
+        select: {
+          id: true,
+          name: true,
+          price: true,
         },
       },
     },
