@@ -65,6 +65,8 @@ model Product {
   purchases     Purchase[]
   record        Record[]
   chats         Chat[]
+
+  @@index([userId])
 }
 
 model Post {
@@ -78,6 +80,8 @@ model Post {
   updatedAt DateTime    @updatedAt
   answers   Answer[]
   wondering Wondering[]
+
+  @@index([userId])
 }
 
 model Answer {
@@ -89,6 +93,9 @@ model Answer {
   postId    Int
   createAt  DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([postId])
 }
 
 model Wondering {
@@ -99,6 +106,9 @@ model Wondering {
   postId    Int
   createAt  DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([postId])
 }
 
 model Review {
@@ -111,6 +121,9 @@ model Review {
   createdFor   User     @relation(name: "receivedReviews", fields: [createdForId], references: [id], onDelete: Cascade)
   createdForId Int
   score        Int
+
+  @@index([createdById])
+  @@index([createdForId])
 }
 
 model Sale {
@@ -121,6 +134,9 @@ model Sale {
   productId Int
   createAt  DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([productId])
 }
 
 model Purchase {
@@ -131,6 +147,9 @@ model Purchase {
   productId Int
   createAt  DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([productId])
 }
 
 model Fav {
@@ -141,6 +160,9 @@ model Fav {
   productId Int
   createAt  DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([productId])
 }
 
 model Record {
@@ -152,6 +174,9 @@ model Record {
   kind      Kind
   createAt  DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([productId])
 }
 
 enum Kind {
@@ -170,6 +195,8 @@ model Stream {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      Int
   messages    Message[]
+
+  @@index([userId])
 }
 
 model Message {
@@ -181,6 +208,9 @@ model Message {
   message   String   @db.MediumText
   stream    Stream   @relation(fields: [streamId], references: [id], onDelete: Cascade)
   streamId  Int
+
+  @@index([userId])
+  @@index([streamId])
 }
 
 model Chat {
@@ -195,6 +225,10 @@ model Chat {
   updatedAt  DateTime @updatedAt
   chatroom   Chatroom @relation(fields: [chatroomId], references: [id], onDelete: Cascade)
   chatroomId Int
+
+  @@index([userId])
+  @@index([productId])
+  @@index([chatroomId])
 }
 
 enum RKind {
@@ -211,6 +245,9 @@ model Chatroom {
   sellerId  Int
   buyer     User     @relation(name: "buyer", fields: [buyerId], references: [id], onDelete: Cascade)
   buyerId   Int
+
+  @@index([sellerId])
+  @@index([buyerId])
 }
 
 model Reservation {
@@ -222,4 +259,7 @@ model Reservation {
   RsellerId Int
   Rbuyer    User     @relation(name: "Rbuyer", fields: [RbuyerId], references: [id], onDelete: Cascade)
   RbuyerId  Int
+
+  @@index([RsellerId])
+  @@index([RbuyerId])
 }
