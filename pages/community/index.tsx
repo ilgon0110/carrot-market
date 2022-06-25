@@ -2,10 +2,12 @@ import type { NextPage } from "next";
 import Layout from "@components/layout";
 import Link from "next/link";
 import FloatingButton from "@components/floating-button";
-import useSWR from "swr";
+import useSWR, { SWRConfig } from "swr";
 import { Post, User } from "@prisma/client";
 import useCoords from "@libs/client/useCoords";
 import client from "@libs/server/client";
+import { profile } from "console";
+import Profile from "pages/profile";
 
 interface PostWithUser extends Post {
   user: User;
@@ -19,7 +21,8 @@ interface PostResponse {
   posts: PostWithUser[];
 }
 
-const Community: NextPage<PostResponse> = ({ posts }) => {
+const Community: NextPage = () => {
+  const { data } = useSWR<PostResponse>(`/api/posts`);
   /* const { latitude, longitude } = useCoords();
   const { data } = useSWR<PostResponse>(
     latitude && longitude
@@ -29,7 +32,7 @@ const Community: NextPage<PostResponse> = ({ posts }) => {
   return (
     <Layout seoTitle="Community" hasTabBar title="동네생활">
       <div className="py-16 px-4 space-y-8">
-        {posts?.map((post, i) => (
+        {data?.posts?.map((post, i) => (
           <Link key={post.id} href={`/community/${post.id}`}>
             <a className="flex cursor-pointer flex-col pt-4 items-start">
               <span className="flex ml-4 items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
@@ -103,6 +106,20 @@ const Community: NextPage<PostResponse> = ({ posts }) => {
   );
 };
 
+const Page: NextPage<{ posts: PostWithUser[] }> = ({ posts }) => {
+  return (
+    <SWRConfig
+      value={{
+        fallback: {
+          "/api/posts": { ok: true, posts },
+        },
+      }}
+    >
+      <Community />
+    </SWRConfig>
+  );
+};
+
 export async function getStaticProps() {
   console.log("Building Community Static");
   const posts = await client.post.findMany({ include: { user: true } });
@@ -115,4 +132,4 @@ export async function getStaticProps() {
   };
 }
 
-export default Community;
+export default Page;

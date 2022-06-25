@@ -2,7 +2,7 @@ import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Button from "@components/button";
 import Layout from "@components/layout";
 import { useRouter } from "next/router";
-import useSWR, { useSWRConfig } from "swr";
+import useSWR, { SWRConfig, useSWRConfig } from "swr";
 import Link from "next/link";
 import { Product, User } from "@prisma/client";
 import useMutation from "@libs/client/useMutation";
@@ -21,11 +21,7 @@ export interface ItemDetailResponse {
   isLiked: boolean;
 }
 
-const ItemDetail: NextPage<ItemDetailResponse> = ({
-  product,
-  relatedProducts,
-  isLiked,
-}) => {
+const ItemDetail: NextPage<ItemDetailResponse> = () => {
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const { data, mutate: boundMutate } = useSWR<ItemDetailResponse>(
@@ -40,7 +36,6 @@ const ItemDetail: NextPage<ItemDetailResponse> = ({
     //mutate("/api/users/me" , (prev:any) => ({ok:!prev.ok}) , false);
     toggleFav({});
   };
-  console.log(favData);
   const [createChatroom, { data: chatroomData }] = useMutation(
     `/api/products/${router.query.id}/chatroom`
   );
@@ -56,9 +51,9 @@ const ItemDetail: NextPage<ItemDetailResponse> = ({
             <div className="w-12 h-12 rounded-full bg-slate-300" />
             <div>
               <p className="text-sm font-medium text-gray-700">
-                {product?.user?.name}
+                {data?.product?.user?.name}
               </p>
-              <Link href={`/users/profiles/${product?.user?.id}`}>
+              <Link href={`/users/profiles/${data?.product?.user?.id}`}>
                 <a className="text-xs font-medium text-gray-500">
                   View profile &rarr;
                 </a>
@@ -67,18 +62,18 @@ const ItemDetail: NextPage<ItemDetailResponse> = ({
           </div>
           <div className="mt-10">
             <h1 className="text-3xl font-bold text-gray-900">
-              {product?.name}
+              {data?.product?.name}
             </h1>
-            {product.isReservation === true ? (
+            {data?.product.isReservation === true ? (
               <div className="flex justify-end -mt-8">
                 <h1 className="text-red-500 font-semibold text-lg">예약중</h1>
               </div>
             ) : null}
             <span className="text-3xl mt-3 block text-gray-900">
-              ${product?.price}
+              ${data?.product?.price}
             </span>
             <p className="text-base my-6 text-gray-700">
-              {product?.description}
+              {data?.product?.description}
             </p>
             <div className="flex items-center justify-between space-x-2">
               <Link href={`/items/${router.query.id}/chatroom`}>
@@ -90,12 +85,12 @@ const ItemDetail: NextPage<ItemDetailResponse> = ({
                 onClick={onFavClick}
                 className={cls(
                   "p-3 flex items-center justify-center hover:bg-red-100  rounded-md",
-                  isLiked
+                  data?.isLiked
                     ? "text-red-500 hover:text-red-600"
                     : "text-gray-500 hover:text-gray-600"
                 )}
               >
-                {isLiked ? (
+                {data?.isLiked ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-6 w-6"
@@ -132,7 +127,7 @@ const ItemDetail: NextPage<ItemDetailResponse> = ({
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Similar items</h2>
           <div className="mt-6 grid grid-cols-2 gap-4">
-            {relatedProducts.map((product, i) => (
+            {data?.relatedProducts.map((product, i) => (
               <Link key={product.id} href={`/items/${product.id}`}>
                 <a key={product.id}>
                   <div className="h-56 w-full mb-4 bg-slate-300" />
@@ -150,6 +145,8 @@ const ItemDetail: NextPage<ItemDetailResponse> = ({
   );
 };
 
+/*
+//getStaticProps 사용 안하기로함. favOnClick 오류. 무작정 다 사용할 필요는 없다고 생각.
 export const getStaticPaths: GetStaticPaths = () => {
   return {
     paths: [],
@@ -162,46 +159,48 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     return {
       props: {},
     };
+  } else {
+    console.log("getStaticProps run");
+    const product = await client.product.findUnique({
+      where: {
+        id: +ctx?.params?.id.toString(),
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+          },
+        },
+      },
+    });
+    const terms = product?.name.split(" ").map((word) => ({
+      name: {
+        contains: word,
+      },
+    }));
+    const relatedProducts = await client.product.findMany({
+      where: {
+        OR: terms,
+        AND: {
+          id: {
+            not: product?.id,
+          },
+        },
+      },
+    });
+    const isLiked = false;
+    /* 5초 delay 시켜주는 함수
+  await new Promise((resolve) => setTimeout(resolve , 5000)); 
+    return {
+      props: {
+        product: JSON.parse(JSON.stringify(product)),
+        relatedProducts: JSON.parse(JSON.stringify(relatedProducts)),
+        isLiked,
+      },
+    };
   }
-  const product = await client.product.findUnique({
-    where: {
-      id: +ctx?.params?.id.toString(),
-    },
-    include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          avatar: true,
-        },
-      },
-    },
-  });
-  const terms = product?.name.split(" ").map((word) => ({
-    name: {
-      contains: word,
-    },
-  }));
-  const relatedProducts = await client.product.findMany({
-    where: {
-      OR: terms,
-      AND: {
-        id: {
-          not: product?.id,
-        },
-      },
-    },
-  });
-  const isLiked = false;
-  /* 5초 delay 시켜주는 함수
-await new Promise((resolve) => setTimeout(resolve , 5000)); */
-  return {
-    props: {
-      product: JSON.parse(JSON.stringify(product)),
-      relatedProducts: JSON.parse(JSON.stringify(relatedProducts)),
-      isLiked,
-    },
-  };
-};
+}; */
 
 export default ItemDetail;
