@@ -14,6 +14,6 @@
 
 ### 5. 거래 후기 버튼(예약날짜 지나면 채팅방에 생성)
 
-### 6. Community 상세 페이지 static으로 refactoring
+~~### 6. Community 상세 페이지 static으로 refactoring~~
 
 ### 7. Item Like function 수정
