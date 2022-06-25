@@ -16,4 +16,4 @@
 
 ~~### 6. Community 상세 페이지 static으로 refactoring~~
 
-### 7. Item Like function 수정
+~~### 7. Item Like function 수정 : 초기버전으로 수정. 굳이 getStaticProps를 써야할 필요성 못느낌~~
